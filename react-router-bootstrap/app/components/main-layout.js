@@ -1,12 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import {Header} from './header';
 
-const MainLayout = ({children})=>{
+const MainLayout = ({header, contents})=>{
   return (
     <div className="app">
-      <Header />
+      {header}
       <aside className="primary-aside">
         <ul>
           <li><Link to="/" activeClassName="active">Home</Link></li>
@@ -15,7 +14,7 @@ const MainLayout = ({children})=>{
         </ul>
       </aside>
         <main>
-       {children}
+       {contents}
        </main>
     </div>
   );

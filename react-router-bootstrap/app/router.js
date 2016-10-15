@@ -11,12 +11,14 @@ import UserList from './components/user-list';
 import UserProfile from './components/user-profile';
 import WidgetList from './components/widget-list';
 
+import {Header} from './components/header';
+
 import 'bootstrap/dist/css/bootstrap.css';
 
 export default (
   <Router history={browserHistory}>
     <Route component={MainLayout}>
-      <Route path="/" component={Home} />
+      <Route path="/" components={{header: Header, contents: Home}} />
 
       <Route path="users">
         <Route component={SearchLayout}>

@@ -6,7 +6,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('*', function(req, res, next) {
   console.log('Request: [GET]', req.originalUrl)
-  res.sendFile(path.resolve(__dirname, 'index.html'));
+  res.sendFile(path.resolve(__dirname,'public', 'index.html'));
 });
 
 
