@@ -101,6 +101,9 @@ We use JSON server as our data source. We use Axios as Ajax client.
 
 ## Work Flow
 
+* /api is in charge of feteching data from JSON server.
+* /container encapsulates data and creates event, like adding/deleting a user/widget
+* /view contains the stateless components.
 
 
 ## ES6 Spread Operator
