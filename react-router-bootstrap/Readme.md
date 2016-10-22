@@ -12,7 +12,7 @@ Using a new feature called "named component".
   Note it is `components` instead of `component`, two curly braces instead of one.
   
   
-  **How to change a function to ES6 style in React
+  **How to change a function to ES6 style in React**
   
   ```
   export default function(props) {
@@ -66,12 +66,13 @@ export default ({imageUrl,name,twitter,worksOn}) => {
 }
 ```
 
-1: remove `function` and add `=>`
-2: change paramter to an object which consists of all the properties of `props`.
+* remove `function` and add `=>`
+
+* change paramter to an object which consists of all the properties of `props`.
 ```
 {imageUrl,name,twitter,worksOn}
 ```
 
-3: remove 'props' froms original function
+* remove 'props' froms original function
 
 
