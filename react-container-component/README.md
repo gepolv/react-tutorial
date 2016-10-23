@@ -194,4 +194,6 @@ deleteUser: function(userId) {
 }
 ```
 
-Note that [lodash](https://lodash.com/) is being used to filter the current state by making a copy of it with all users that don't match the ID. The copy without the matched user will replace the state.
+<b>Note: `this` is used in this function. That is why we need `bind` when the funtion is used in other places. </b>
+
+Note that [lodash](https://lodash.com/) is being used to filter the current state by making a <b>copy</b> of it with all users that don't match the ID. The copy without the matched user will replace the state.
