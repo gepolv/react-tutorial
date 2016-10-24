@@ -1,5 +1,16 @@
 # Guide 3: Redux
 
+
+## Installing and Running
+
+To start:
+
+```
+npm install
+npm start
+```
+
+## Note
 As we see, React components are organized in a hierarchical way, sort of like a tree structure. The data is passed through parent to children through `props`. If two children want to communicate with each other, they have to pass data back to their parent or grandparent and then let the ancestor to pass down the data to the other child. Which is not intuitive and sometimes becomes a mess if too many components want to communicate with each other. So `Redux` is introduced, which imposes a "publish-subscribe" pattern. "`Redux` offers a solution of storing all your application state/data in one place, called a "store". Components then "dispatch/publish" state changes to the store, not directly to other components. The components that need to be aware of state changes can "subscribe" to the store."    
 
 * `reducer`
@@ -12,30 +23,7 @@ As we see, React components are organized in a hierarchical way, sort of like a 
 
 This is the final Guide in this series. Our code builds a Single Page Application which resembles this functionality:
 
-![Final Preview](https://raw.githubusercontent.com/bradwestfall/CSS-Tricks-React-Series/master/guide-3-redux/docs/preview.gif)
 
-## Installing and Running
-
-To start, make sure you're in the `guide-3-redux` folder in command-line.
-
-```sh
-# Install Node Modules
-npm install
-
-# Start the Server
-gulp
-
-# If you want to edit the react code, this rebuilds
-gulp watch
-```
-
-> The server will be available at localhost:3000
-
-If you want to edit the React code, you'll have to re-build the `public/js/bundle.js` file with Webpack. You'll probably want to open a new terminal tab so you can keep your server running. To rebuild with Webpack, type:
-
-```sh
-gulp watch
-```
 
 # Implementation Details
 
