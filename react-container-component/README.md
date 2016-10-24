@@ -2,130 +2,108 @@
 
 ## Installing and Running
 
-To start, make sure you're in the `guide-2-container-components` folder in command-line.
+To start,
 
 ```sh
 # Install Node Modules
 npm install
 
 # Start the Server
-gulp
-
-# If you want to edit the react code, this rebuilds
-gulp watch
+npm start
 ```
 
-> The server will be available at localhost:3000
+## On Container
 
-If you want to edit the React code, you'll have to re-build the `public/js/bundle.js` file with Webpack. You'll probably want to open a new terminal tab so you can keep your server running. To rebuild with Webpack, type:
+Stateless component becomes more and more prevalent nowadays. They are stateless in the sense of the fact that they have no internal state change. In other words, stateless components do not have `setState` being used. Their only job is rendering the given data. Where is the data from? `Container`. `Container` consists of two parts. The first part is prparing data. The other part is the rendering part which is stateless component.
 
-```sh
-gulp watch
-```
-
-# Learning the code
-
-If you jump into the code, I would advise looking at `Widgets` before `Users`. There's much less code to look at for `Widgets`. The `Users` code is similar to `Widgets`, but there's more with profiles.
-
-
-# Implementation Details
-
-Here are some details for this guide that weren't covered in the tutorial:
-
-
-## JSON Server
-
-For Guide 2 and 3, we will use __JSON Server__ to give us the feel of having a real database. It will need to run on a different port from our Node server though, so it runs on _localhost:3001_.
-
-Launching the Node server with `gulp` now also launches JSON Server.
-
-They have [great documentation](https://github.com/typicode/json-server) if you want to learn more about how it works, but in short, they create a RESTful API for us to `GET`, `POST`, `PUT`, and `DELETE` to. In this guide, we can use those HTTP verbs on the `/users` path as follows:
-
-A `GET` request to _localhost:3001/users_ will return a JSON array which resembles:
+`Container` has two implementation forms. One implementation form is `traditional` form:
 
 ```
-[
-    {
-      "id": 3,
-      "name": "Dan Abramov",
-      "github": "gaearon",
-      "twitter": "dan_abramov",
-      "worksOn": "Redux"
-    },
+const UserListContainer = React.createClass({
 
-    ...
+  getInitialState: function() {
+    return {
+      users: []
+    }
+  },
 
-]
-```
+  componentDidMount: function() {
+    userApi.getUsers().then(users => {
+      this.setState({users: users})
+    });
+  },
 
-A `DELETE` request to _localhost:3001/users/3_ will delete the record where `id:3`.
+  deleteUser: function(userId) {
+    userApi.deleteUser(userId).then(() => {
+      const newUsers = _.filter(this.state.users, user => user.id != userId);
+      this.setState({users: newUsers})
+    });
+  },
 
-Since I knew that you might mess with the data (like a few deletes), I made it so each time you restart the server with the `gulp` command, the original database data will be restored - so delete away!
+  render: function() {
+    return (
+      <UserList users={this.state.users} deleteUser={this.deleteUser} />
+    );
+  }
 
+});
 
-## Organization
-
-The `/app/components` folder is now organized by:
-
-- containers
-- layouts
-- views
-
-This was just the simplest way to organize this small codebase. I make no claims that this is amazing organization :)
-
-
-## Search Layout
-
-The main purpose of the Search Layout component was to convey nested layouts in the first tutorial. It doesn't yet serve us any in the Container Components tutorial to utilize it. Therefore, it just has some static information which is not yet hooked up to state. In the third guide, we will make this information more meaningful.
-
-
-## Axios
-
-As discussed in the tutorial, we use [axios](https://github.com/mzabriskie/axios) for our Ajax (XHR) requests. However, the components don't make XHR requests directly from their `componentDidMount()` methods as the tutorial showed. Instead, all database API requests exist in the `/app/api` folder. The `componentDidMount()` methods will use those outside files for XHR requests. This just helps keep the component size down and helps them to look cleaner.
-
-
-## ES6 Arrow Functions
-
-ES6 arrow functions are very popular in React tutorials online. While the CSS-Tricks tutorial doesn't use ES6 features, the code at this guide will. Here's a brief explanation of how they work:
-
-```js
-// Old way with ES5
-componentDidMount: function() {
-  userApi.getList().then(function(users) {
-    this.setState({users: users});
-  });
-},
-
-// New way with ES6 Arrow Functions
-componentDidMount: function() {
-  userApi.getList().then(users => {
-    this.setState({users: users});
-  });
+//stateless component:
+const UserList = ({users, deleteUser}) =>  {
+  return (
+    <div className="data-list">
+      {users.map(user => {
+        return (
+          <div key={user.id} className="data-list-item">
+            <div className="details">
+              <Link to={'/users/' + user.id}>{user.name}</Link>
+            </div>
+            <div className="controls">
+            {/* note onClick's function. Cannot use "deleteUser(user.id)" directly.
+            instead, use "()=>deleteUser(user.id)" */}
+              <button onClick={()=>deleteUser(user.id)} className="delete">Delete</button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 }
+
 ```
 
-Here's another example with Axios promises:
+The other way is using 3-rd part module (such as react-komposer) to `connect` preparing part and rendering part(stateless component).
 
-```js
-// Old way with ES5
-export function getList() {
-  return axios.get('http://localhost:3001/users')
-    .then(function(response) {
-      return response.data;
+```
+import { composeWithTracker as composer } from 'react-komposer';
+// Prepare data
+const UserListContainer = (props,onData) => {
+    userApi.getUsers().then(users => {
+      onData(null, {users});
     });
 }
 
-
-// New way with ES6 Arrow Functions
-export function getList() {
-  return axios.get('http://localhost:3001/users')
-    .then(response => response.data);
+//rendering interface
+const UserList = ({users}) => {
+  let items = users.map(user => { return <User key={user.id} name={user.name} />});
+  return <ol> {items} </ol> ;
 }
+
+//in charge of displaying data
+const Display = composer( UserListContainer )( UserList );
 ```
 
-Are arrow functions just syntax sugar for less typing? No, they actually have different rules for scope which can sometimes be beneficial for callback functions. For this guide, we'll only use them for callback functions so you can get used to them in small doses.
 
-If you're interested in learning more, [I wrote a blog post](http://bradwestfall.com/articles/dont-get-javascript-es6-arrow-functions).
+## JSON Server and Axios
+
+We use JSON server as our data source. We use Axios as Ajax client.
+
+
+## Work Flow
+
+* /api is in charge of feteching data from JSON server.
+* /container encapsulates data and creates event, like adding/deleting a user/widget
+* /view contains the stateless components.
 
 
 ## ES6 Spread Operator
@@ -216,4 +194,6 @@ deleteUser: function(userId) {
 }
 ```
 
-Note that [lodash](https://lodash.com/) is being used to filter the current state by making a copy of it with all users that don't match the ID. The copy without the matched user will replace the state.
+<b>Note: `this` is used in this function. That is why we need `bind` when the funtion is used in other places. </b>
+
+Note that [lodash](https://lodash.com/) is being used to filter the current state by making a <b>copy</b> of it with all users that don't match the ID. The copy without the matched user will replace the state.
